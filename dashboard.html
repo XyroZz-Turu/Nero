@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Nero Store</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+background:#0b0b0b;
+color:white;
+font-family:Poppins;
+}
+
+.header{
+text-align:center;
+padding:20px;
+font-family:Anton;
+font-size:35px;
+letter-spacing:3px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:20px;
+padding:20px;
+}
+
+.card{
+background:#111;
+border:2px solid rgba(255,255,255,.2);
+padding:15px;
+border-radius:12px;
+}
+
+input,textarea,select{
+width:100%;
+padding:10px;
+margin-top:6px;
+margin-bottom:10px;
+border:none;
+outline:none;
+background:#1a1a1a;
+color:white;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.btn-add{
+background:#ff2e2e;
+color:white;
+}
+
+.item{
+background:#1a1a1a;
+padding:10px;
+border-radius:8px;
+margin-top:10px;
+font-size:13px;
+}
+
+.small{
+opacity:.7;
+font-size:12px;
+}
+
+.btn-danger{
+background:#ff2e2e;
+color:white;
+margin-top:5px;
+}
+
+.btn-sold{
+background:#444;
+color:white;
+margin-top:5px;
+}
+
+.logout-wrap{
+padding:20px;
+}
+
+.logout{
+background:#ff2e2e;
+color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">DASHBOARD NERO STORE</div>
+
+<div class="grid">
+
+<!-- PRODUK -->
+<div class="card">
+<h3>➕ Tambah Produk</h3>
+
+<input id="kode" placeholder="Kode Produk">
+<input id="nama" placeholder="Nama Produk">
+<textarea id="spek" placeholder="Spek"></textarea>
+<input id="harga" placeholder="Harga">
+
+<input id="gambar" placeholder="Link Gambar (opsional)">
+<input type="file" id="fileProduk" accept="image/*">
+
+<input id="login" placeholder="Login Info">
+<input id="wa" placeholder="WhatsApp">
+
+<select id="status">
+<option value="ready">READY</option>
+<option value="sold">SOLD</option>
+</select>
+
+<button class="btn-add" onclick="addProduk()">Tambah Produk</button>
+
+<div id="listProduk"></div>
+</div>
+
+<!-- TESTIMONI -->
+<div class="card">
+<h3>💬 Tambah Testimoni</h3>
+
+<input id="tkode" placeholder="Kode Testi">
+<input id="tnama" placeholder="Nama">
+<textarea id="tpesan" placeholder="Pesan"></textarea>
+
+<input id="tgambar" placeholder="Link Gambar (opsional)">
+<input type="file" id="fileTesti" accept="image/*">
+
+<input id="tpenjual" placeholder="Penjual">
+
+<button class="btn-add" onclick="addTesti()">Tambah Testi</button>
+
+<div id="listTesti"></div>
+</div>
+
+</div>
+
+<div class="logout-wrap">
+<button class="logout" onclick="logout()">LOG OUT</button>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+deleteDoc,
+doc,
+getDocs,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+import {
+getStorage,
+ref,
+uploadBytes,
+getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-storage.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCJomifys1cY-9ELI4Ft3Z5N-cLs2YQcVU",
+authDomain: "nero-fa67c.firebaseapp.com",
+projectId: "nero-fa67c",
+storageBucket: "nero-fa67c.firebasestorage.app",
+messagingSenderId: "349005489687",
+appId: "1:349005489687:web:c27ce076b4f54da5275e52",
+measurementId: "G-QWSLFFHVS7"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+const listProduk = document.getElementById("listProduk");
+const listTesti = document.getElementById("listTesti");
+
+if(localStorage.getItem("adminLogin") !== "true"){
+location.href = "login.html";
+}
+
+/* ================= PRODUK ================= */
+
+window.addProduk = async function(){
+
+let file = document.getElementById("fileProduk").files[0];
+let imageUrl = document.getElementById("gambar").value;
+
+try{
+if(file){
+let imgRef = ref(storage,"produk/"+Date.now());
+await uploadBytes(imgRef,file);
+imageUrl = await getDownloadURL(imgRef);
+}
+}catch(e){
+console.log("upload gagal, lanjut tanpa gambar");
+}
+
+await addDoc(collection(db,"produk"),{
+kode: kode.value || "",
+nama: nama.value || "",
+spek: spek.value || "",
+harga: Number(harga.value) || 0,
+gambar: imageUrl || "",
+login: login.value || "",
+wa: wa.value || "",
+status: status.value || "ready"
+});
+
+alert("Produk ditambahkan");
+loadProduk();
+}
+
+/* DELETE */
+window.deleteProduk = async function(id){
+await deleteDoc(doc(db,"produk",id));
+loadProduk();
+}
+
+/* SOLD */
+window.setSold = async function(id){
+await updateDoc(doc(db,"produk",id),{
+status:"sold"
+});
+loadProduk();
+}
+
+/* LOAD */
+async function loadProduk(){
+listProduk.innerHTML="";
+
+let snap = await getDocs(collection(db,"produk"));
+
+snap.forEach(d=>{
+let data = d.data();
+
+listProduk.innerHTML += `
+<div class="item">
+<b>${data.nama}</b>
+<div class="small">${data.kode}</div>
+<div>Status: ${data.status}</div>
+
+<button class="btn-sold" onclick="setSold('${d.id}')">SOLD</button>
+<button class="btn-danger" onclick="deleteProduk('${d.id}')">HAPUS</button>
+</div>
+`;
+});
+}
+
+/* ================= TESTI ================= */
+
+window.addTesti = async function(){
+
+let file = document.getElementById("fileTesti").files[0];
+let imageUrl = document.getElementById("tgambar").value;
+
+try{
+if(file){
+let imgRef = ref(storage,"testimoni/"+Date.now());
+await uploadBytes(imgRef,file);
+imageUrl = await getDownloadURL(imgRef);
+}
+}catch(e){
+console.log("upload gagal");
+}
+
+await addDoc(collection(db,"testimoni"),{
+kode: tkode.value || "",
+nama: tnama.value || "",
+pesan: tpesan.value || "",
+gambar: imageUrl || "",
+penjual: tpenjual.value || ""
+});
+
+alert("Testimoni ditambahkan");
+loadTesti();
+}
+
+/* DELETE TESTI */
+window.deleteTesti = async function(id){
+await deleteDoc(doc(db,"testimoni",id));
+loadTesti();
+}
+
+/* LOAD TESTI */
+async function loadTesti(){
+listTesti.innerHTML="";
+
+let snap = await getDocs(collection(db,"testimoni"));
+
+snap.forEach(d=>{
+let data = d.data();
+
+listTesti.innerHTML += `
+<div class="item">
+<b>${data.nama}</b>
+<div class="small">${data.kode}</div>
+
+<button class="btn-danger" onclick="deleteTesti('${d.id}')">HAPUS</button>
+</div>
+`;
+});
+}
+
+/* LOGOUT */
+window.logout = function(){
+localStorage.removeItem("adminLogin");
+location.href="login.html";
+}
+
+loadProduk();
+loadTesti();
+
+</script>
+
+</body>
+</html>

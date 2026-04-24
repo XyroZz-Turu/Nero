@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NERO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+color:white;
+font-family:Poppins;
+overflow:hidden;
+background:black;
+}
+
+/* BG */
+.bg{
+position:fixed;
+width:100%;
+height:100%;
+object-fit:cover;
+z-index:-2;
+}
+
+/* overlay */
+.overlay{
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.55);
+z-index:-1;
+}
+
+/* noise */
+body::before{
+content:"";
+position:fixed;
+width:100%;
+height:100%;
+background-image:url("https://grainy-gradients.vercel.app/noise.svg");
+opacity:.15;
+z-index:0;
+}
+
+/* FADE */
+.fade{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+z-index:999;
+opacity:1;
+transition:.8s ease;
+}
+
+.fade.hide{
+opacity:0;
+pointer-events:none;
+}
+
+/* HERO */
+.hero{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+position:relative;
+z-index:1;
+
+/* IMPORTANT: langsung visible default false */
+opacity:0;
+transform:scale(1.05);
+transition:1s ease;
+}
+
+.hero.show{
+opacity:1;
+transform:scale(1);
+}
+
+.title{
+font-family:Anton;
+font-size:70px;
+letter-spacing:6px;
+}
+
+.subtitle{
+opacity:.7;
+margin-top:5px;
+margin-bottom:40px;
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:15px;
+width:260px;
+}
+
+/* BUTTON */
+.btn{
+position:relative;
+height:75px;
+border:2px solid white;
+overflow:hidden;
+cursor:pointer;
+transition:.2s;
+}
+
+.btn img{
+position:absolute;
+width:100%;
+height:100%;
+object-fit:cover;
+filter:brightness(.45);
+}
+
+.btn span{
+position:absolute;
+left:15px;
+top:50%;
+transform:translateY(-50%);
+letter-spacing:2px;
+font-weight:500;
+}
+
+.btn:hover{
+transform:translate(-3px,-3px);
+box-shadow:5px 5px 0px white;
+}
+
+.footer{
+position:absolute;
+bottom:20px;
+font-size:12px;
+opacity:.5;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- FADE -->
+<div class="fade" id="fade"></div>
+
+<!-- BG -->
+<video autoplay muted loop playsinline class="bg">
+<source src="b5.mp4">
+</video>
+
+<div class="overlay"></div>
+
+<!-- HERO -->
+<div class="hero" id="hero">
+
+<div class="title">NERO</div>
+<div class="subtitle">Digital Account Store</div>
+
+<div class="menu">
+
+<div class="btn" onclick="go('produk.html')">
+<img src="img/produk.png" onerror="this.src='https://via.placeholder.com/300'">
+<span>PRODUK</span>
+</div>
+
+<div class="btn" onclick="go('testimoni.html')">
+<img src="img/testimoni.png" onerror="this.src='https://via.placeholder.com/300'">
+<span>TESTIMONI</span>
+</div>
+
+<div class="btn" onclick="go('tentang.html')">
+<img src="img/tentang.png" onerror="this.src='https://via.placeholder.com/300'">
+<span>TENTANG</span>
+</div>
+
+<div class="btn" onclick="go('sosmed.html')">
+<img src="img/sosmed.png" onerror="this.src='https://via.placeholder.com/300'">
+<span>SOSMED</span>
+</div>
+
+</div>
+
+<div class="footer">
+Nero Store © 2026
+</div>
+
+</div>
+
+<script>
+
+/* SAFE START (ANTI BLANK SCREEN BUG) */
+document.addEventListener("DOMContentLoaded", () => {
+
+const fade = document.getElementById("fade");
+const hero = document.getElementById("hero");
+
+/* pastikan hero ready dulu */
+setTimeout(() => {
+
+fade.classList.add("hide");
+hero.classList.add("show");
+
+}, 300);
+
+});
+
+/* NAVIGATION */
+function go(url){
+
+const fade = document.getElementById("fade");
+
+/* tampilkan fade lagi */
+fade.classList.remove("hide");
+
+setTimeout(()=>{
+window.location.href = url;
+},500);
+
+}
+
+</script>
+
+</body>
+</html>

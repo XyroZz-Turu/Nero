@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sosmed - Nero Store</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:Poppins;
+color:white;
+overflow:hidden;
+}
+
+/* bg */
+.bg{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-2;
+}
+
+.bg video{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.overlay{
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+z-index:-1;
+}
+
+/* fade */
+.fade{
+position:fixed;
+width:100%;
+height:100%;
+background:black;
+opacity:0;
+transition:.4s;
+z-index:999;
+pointer-events:none;
+}
+
+.fade.show{
+opacity:1;
+}
+
+/* hero */
+.hero{
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+}
+
+.title{
+font-family:Anton;
+font-size:55px;
+letter-spacing:6px;
+margin-bottom:30px;
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:18px;
+width:280px;
+}
+
+/* CARD MANGA */
+.btn{
+height:75px;
+border:2px solid white;
+display:flex;
+align-items:center;
+padding-left:20px;
+letter-spacing:3px;
+cursor:pointer;
+transition:.2s;
+position:relative;
+overflow:hidden;
+background:rgba(0,0,0,.35);
+}
+
+/* ARSIRAN MANGA */
+.btn::before{
+content:"";
+position:absolute;
+inset:0;
+background:
+repeating-linear-gradient(
+-60deg,
+rgba(255,255,255,0.05) 0px,
+rgba(255,255,255,0.05) 2px,
+transparent 2px,
+transparent 7px
+);
+pointer-events:none;
+}
+
+/* hover */
+.btn:hover{
+transform:translate(-3px,-3px);
+box-shadow:5px 5px 0px white;
+background:rgba(255,255,255,.05);
+}
+
+.back{
+position:absolute;
+top:20px;
+left:20px;
+border:2px solid white;
+padding:5px 12px;
+cursor:pointer;
+}
+
+.back:hover{
+background:white;
+color:black;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg">
+<video autoplay muted loop>
+<source src="b6.mp4">
+</video>
+</div>
+
+<div class="overlay"></div>
+<div class="fade" id="fade"></div>
+
+<audio id="bgMusic" loop>
+<source src="audio/music.mp3">
+</audio>
+
+<div class="back" onclick="go('home.html')">BACK</div>
+
+<div class="hero">
+
+<div class="title">SOSMED</div>
+
+<div class="menu">
+
+<div class="btn" onclick="link('https://whatsapp.com/channel/xxxxx')">
+SALURAN
+</div>
+
+<div class="btn" onclick="link('https://chat.whatsapp.com/xxxxx')">
+GRUP
+</div>
+
+<div class="btn" onclick="link('https://wa.me/628xxxx')">
+ADMIN
+</div>
+
+<div class="btn" onclick="link('https://wa.me/628xxxx')">
+OWNER
+</div>
+
+<div class="btn" onclick="link('https://tiktok.com/@username')">
+TIKTOK
+</div>
+
+<div class="btn" onclick="link('https://instagram.com/username')">
+INSTAGRAM
+</div>
+
+</div>
+
+</div>
+
+<script>
+window.onload = function(){
+if(localStorage.getItem("nero_music") === "play"){
+bgMusic.volume = 0.4
+bgMusic.play()
+}
+}
+
+function go(url){
+fade.classList.add("show")
+setTimeout(()=> location.href=url ,400)
+}
+
+function link(url){
+window.open(url,"_blank")
+}
+</script>
+
+</body>
+</html>

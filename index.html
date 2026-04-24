@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nero Store</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:Poppins;
+color:white;
+overflow:hidden;
+background:black;
+}
+
+/* INTRO */
+.intro{
+position:fixed;
+width:100%;
+height:100%;
+z-index:5;
+}
+
+.intro video{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* BG */
+.bg{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-2;
+}
+
+.bg video{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.overlay{
+position:fixed;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+z-index:-1;
+}
+
+/* MAIN */
+.main{
+position:fixed;
+width:100%;
+height:100%;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+opacity:0;
+transition:1s;
+}
+
+.title{
+font-family:Anton;
+font-size:55px;
+letter-spacing:6px;
+margin-bottom:20px;
+}
+
+.start{
+border:2px solid white;
+padding:10px 30px;
+cursor:pointer;
+transition:.2s;
+}
+
+.start:hover{
+background:white;
+color:black;
+}
+
+/* 🔥 FADE EFFECT */
+.fade{
+position:fixed;
+width:100%;
+height:100%;
+background:black;
+opacity:0;
+pointer-events:none;
+z-index:10;
+transition:.5s;
+}
+
+.fade.show{
+opacity:1;
+}
+</style>
+</head>
+
+<body>
+
+<!-- INTRO -->
+<div class="intro" id="intro">
+<video autoplay muted>
+<source src="b4.mp4">
+</video>
+</div>
+
+<!-- BG -->
+<div class="bg">
+<video autoplay muted loop>
+<source src="b5.mp4">
+</video>
+</div>
+
+<div class="overlay"></div>
+
+<!-- MAIN -->
+<div class="main" id="main">
+
+<div class="title">
+N<span id="adminE">e</span>ro Store
+</div>
+
+<div class="start" onclick="goHome()">START</div>
+
+</div>
+
+<!-- FADE -->
+<div class="fade" id="fade"></div>
+
+<!-- FIREBASE (AMAN FIX) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import {
+getAuth,
+onAuthStateChanged,
+setPersistence,
+browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyCJomifys1cY-9ELI4Ft3Z5N-cLs2YQcVU",
+authDomain: "nero-fa67c.firebaseapp.com",
+projectId: "nero-fa67c",
+storageBucket: "nero-fa67c.firebasestorage.app",
+messagingSenderId: "349005489687",
+appId: "1:349005489687:web:c27ce076b4f54da5275e52"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+/* FIX SESSION */
+await setPersistence(auth, browserLocalPersistence);
+
+/* START → HOME + FADE */
+window.goHome = function(){
+
+document.getElementById("fade").classList.add("show");
+
+setTimeout(()=>{
+location.href="home.html";
+},500);
+
+}
+
+/* INTRO */
+setTimeout(()=>{
+document.getElementById("intro").style.display="none";
+document.getElementById("main").style.opacity="1";
+},3000);
+
+/* ADMIN CLICK 5X */
+let klik = 0;
+
+document.getElementById("adminE").onclick = function(e){
+e.stopPropagation();
+klik++;
+
+if(klik == 5){
+document.getElementById("fade").classList.add("show");
+
+setTimeout(()=>{
+location.href="login.html";
+},500);
+
+klik = 0;
+}
+
+setTimeout(()=>klik=0,2000);
+}
+
+/* SESSION CHECK */
+onAuthStateChanged(auth,(user)=>{
+window.currentUser = user;
+});
+
+</script>
+
+</body>
+</html>
